@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 from telegram import Update
 from telegram.ext import Application, ApplicationBuilder, ContextTypes, PollAnswerHandler
@@ -15,9 +16,27 @@ from quiz_engine import (
     QuizManager,
 )
 
+LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+
+def setup_logging() -> None:
+    """Add a timestamped log file (dd-mm-yyyy-hh-mm-ss); console is already set by basicConfig."""
+    timestamp = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    log_dir = Path(__file__).resolve().parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / f"quiz_{timestamp}.log"
+
+    formatter = logging.Formatter(LOG_FORMAT)
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+
+    root = logging.getLogger()
+    root.addHandler(file_handler)
+    root.info("Logging to file: %s", log_file)
+
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format=LOG_FORMAT,
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -88,7 +107,8 @@ def build_application() -> Application:
 
         # Announce quiz start in the target group with today's date
         today_str = datetime.now().strftime("%d %b %Y")
-        start_text = f"*Starting Quiz - {today_str}*\nGet ready for today's questions!"
+        start_text = f"*Starting Quiz - {today_str}*\nGet ready for today's questions!!"
+
         await application.bot.send_message(
             chat_id=group_chat_id,
             text=start_text,
@@ -126,6 +146,7 @@ def build_application() -> Application:
 
 
 def main() -> None:
+    setup_logging()
     application = build_application()
 
     logger.info("Starting bot with polling...")
@@ -133,6 +154,11 @@ def main() -> None:
         allowed_updates=["poll_answer"],
         close_loop=False,
     )
+
+    # Quiz finished; flush all logs to the timestamped file before exit
+    logger.info("Bot stopped after quiz completion.")
+    for handler in logging.getLogger().handlers:
+        handler.flush()
 
 
 if __name__ == "__main__":

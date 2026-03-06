@@ -17,7 +17,7 @@ LOG_MARKER = "***$$&&***"
 
 # Core quiz configuration (tweak these before running main.py)
 # Total number of questions to ask per quiz run.
-QUIZ_QUESTION_COUNT = 3
+QUIZ_QUESTION_COUNT = 10
 
 # Explanation mode: "final" uses solution.final_explanation, "analysis" uses
 # solution.statement_analysis (if present), falling back to final_explanation.
@@ -25,12 +25,12 @@ EXPLANATION_MODE = "analysis"  # or "final"
 
 # Timing configuration (tweak these constants before running main.py)
 # How long each poll stays open for users to answer (seconds).
-QUIZ_POLL_DURATION_SECONDS = 10
+QUIZ_POLL_DURATION_SECONDS = 50
 # Extra safety buffer after the poll closes so all PollAnswer updates are processed
 # before computing winners (seconds).
 QUIZ_POLL_ANSWER_BUFFER_SECONDS = 5
 # Wait time between announcing results for one question and posting the next (seconds).
-QUIZ_INTER_QUESTION_DELAY_SECONDS = 5
+QUIZ_INTER_QUESTION_DELAY_SECONDS = 10
 
 
 @dataclass
@@ -270,7 +270,8 @@ class QuizManager:
                         )
 
                     explanation_msg = (
-                        f"💡 *Explanation for Q{q_number}:*\n{explanation_body}"
+                        f"💡 *Explanation for Q{q_number}:*\n"
+                        f"*Correct answer: {correct_letter}*\n\n{explanation_body}"
                     )
                     await application.bot.send_message(
                         chat_id=self.group_chat_id,
@@ -283,16 +284,14 @@ class QuizManager:
                     else:
                         users_list = "None"
 
-                    # Per-question result announcement
+                    # Per-question result: who got it right (correct answer is already in explanation)
                     announce_text = (
-                        f"*✅ Q{q_number}* - *Correct Answer: {correct_letter}*\n"
-                        f"*Correct answer by:*\n{users_list}"
+                        f"✅ Q{q_number}\nCorrect answer by:\n{users_list}"
                     )
 
                     await application.bot.send_message(
                         chat_id=self.group_chat_id,
                         text=announce_text,
-                        parse_mode="Markdown",
                     )
 
                     # If this is not the last question, inform users when the next
@@ -300,23 +299,12 @@ class QuizManager:
                     # regular poll so Telegram shows its timer UI.
                     if q_number < len(session.questions):
                         next_q_text = (
-                            f"⏭ Next question coming up soon..."
+                            f"⏭ Next question coming up in few seconds..."
                         )
                         await application.bot.send_message(
                             chat_id=self.group_chat_id,
                             text=next_q_text,
                             parse_mode="Markdown",
-                        )
-
-                        next_q_question = (
-                            f"Next question coming up soon..."
-                        )
-                        await application.bot.send_poll(
-                            chat_id=self.group_chat_id,
-                            question=next_q_question,
-                            options=["⏳"],
-                            is_anonymous=True,
-                            open_period=QUIZ_INTER_QUESTION_DELAY_SECONDS,
                         )
 
                         logger.info(
@@ -367,6 +355,7 @@ class QuizManager:
         finally:
             logger.info("%s Quiz session finished. Clearing active session.", LOG_MARKER)
             self._active_session = None
+            application.stop_running()
 
     def _get_correct_users_for_question(
         self, question_index: int, correct_index: int
@@ -470,8 +459,13 @@ class QuizManager:
                     if chosen_index == question.correct_index:
                         user_scores[user_id] = user_scores.get(user_id, 0) + 1
 
-        # Build and send leaderboard (Top 10), always showing ranks 1-10.
-        leaderboard_text: Optional[str] = None
+        # Always send leaderboard (Top 10): with participants or "Rank N: None" for all ranks.
+        await application.bot.send_message(
+            chat_id=self.group_chat_id,
+            text="*Leaderboard (Top 10)*",
+            parse_mode="Markdown",
+        )
+
         if user_scores:
             # Sort by descending score, then by display name for stability
             sorted_users = sorted(
@@ -493,49 +487,51 @@ class QuizManager:
                     prev_score = score
                 rank_map[user_id] = current_rank
 
-            lines: List[str] = ["*Leaderboard (Top 10)*"]
-            # For each rank from 1 to 10, either list users with that rank or show None.
+            lines: List[str] = []
             for rank in range(1, 11):
-                # Find users with this rank
                 users_at_rank = [
                     (user_id, user_scores[user_id])
                     for user_id, r in rank_map.items()
                     if r == rank
                 ]
                 if not users_at_rank:
-                    lines.append(f"{rank}. None")
+                    lines.append(f"Rank {rank}: None")
                     continue
-
                 for user_id, score in users_at_rank:
                     display_name = session.usernames.get(
                         user_id, f"user_id:{user_id}"
                     )
-                    lines.append(f"{rank}. {display_name} - {score} correct")
-
+                    lines.append(f"Rank {rank}: {display_name} - {score} correct")
             leaderboard_text = "\n".join(lines)
-            await application.bot.send_message(
-                chat_id=self.group_chat_id,
-                text=leaderboard_text,
-                parse_mode="Markdown",
-            )
-
-            # Also send leaderboard to admin chat if configured
-            if self.admin_chat_id is not None:
-                try:
-                    await application.bot.send_message(
-                        chat_id=self.admin_chat_id,
-                        text=leaderboard_text,
-                        parse_mode="Markdown",
-                    )
-                except Exception as admin_exc:  # noqa: BLE001
-                    logger.error(
-                        "%s Failed to send leaderboard to admin: %s",
-                        LOG_MARKER,
-                        admin_exc,
-                    )
+        else:
+            # No participants: show Rank 1: None through Rank 10: None
+            leaderboard_text = "\n".join(f"Rank {r}: None" for r in range(1, 11))
 
         await application.bot.send_message(
             chat_id=self.group_chat_id,
-            text="🏁 Daily Quiz Completed. Thanks for joining!",
+            text=leaderboard_text,
+        )
+
+        if self.admin_chat_id is not None:
+            try:
+                await application.bot.send_message(
+                    chat_id=self.admin_chat_id,
+                    text="*Leaderboard (Top 10)*",
+                    parse_mode="Markdown",
+                )
+                await application.bot.send_message(
+                    chat_id=self.admin_chat_id,
+                    text=leaderboard_text,
+                )
+            except Exception as admin_exc:  # noqa: BLE001
+                logger.error(
+                    "%s Failed to send leaderboard to admin: %s",
+                    LOG_MARKER,
+                    admin_exc,
+                )
+
+        await application.bot.send_message(
+            chat_id=self.group_chat_id,
+            text="🏁 Daily Quiz Completed.\nThanks for joining!",
         )
 

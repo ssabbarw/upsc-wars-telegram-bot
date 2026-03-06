@@ -1,0 +1,111 @@
+2026-03-06 17:34:44,411 - root - INFO - Logging to file: /Users/shifosachin/Documents/upsc-wars-telegram-bot/logs/quiz_06-03-2026-17-34-44.log
+2026-03-06 17:34:44,411 - __main__ - INFO - Effective config -> GROUP_CHAT_ID=-1003818991305, ADMIN_CHAT_ID=None, QUIZ_QUESTION_COUNT=10, QUIZ_POLL_DURATION_SECONDS=20, QUIZ_POLL_ANSWER_BUFFER_SECONDS=5, QUIZ_INTER_QUESTION_DELAY_SECONDS=5
+2026-03-06 17:34:44,412 - question_loader - INFO - Loading questions from data_raw/1.json
+2026-03-06 17:34:44,417 - question_loader - INFO - Loading questions from data_raw/2.json
+2026-03-06 17:34:44,423 - question_loader - INFO - Loading questions from data_raw/3.json
+2026-03-06 17:34:44,427 - question_loader - INFO - Loading questions from data_raw/4.json
+2026-03-06 17:34:44,461 - question_loader - INFO - Processed 400 questions. Skipped 0.
+2026-03-06 17:34:44,461 - __main__ - INFO - Loaded 400 preprocessed questions.
+2026-03-06 17:34:44,582 - __main__ - INFO - Starting bot with polling...
+2026-03-06 17:34:45,379 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getMe "HTTP/1.1 200 OK"
+2026-03-06 17:34:45,380 - __main__ - INFO - Starting manual quiz run immediately after initialization.
+2026-03-06 17:34:45,832 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:34:45,833 - quiz_engine - INFO - ***$$&&*** Starting manual quiz with 10 questions.
+2026-03-06 17:34:45,833 - quiz_engine - INFO - ***$$&&*** Posting question 1/10 (id=5bd82ee7-a7c6-4d61-9b7a-7e9b9f608b05) to chat -1003818991305
+2026-03-06 17:34:46,300 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:34:46,301 - quiz_engine - INFO - ***$$&&*** Using A/B/C/D options for Q1 in poll (full options too long or unavailable).
+2026-03-06 17:34:46,301 - quiz_engine - INFO - ***$$&&*** Correct option for Q1 is B (index=1)
+2026-03-06 17:34:46,501 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/deleteWebhook "HTTP/1.1 200 OK"
+2026-03-06 17:34:46,502 - telegram.ext.Application - INFO - Application started
+2026-03-06 17:34:46,754 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:34:46,755 - quiz_engine - INFO - ***$$&&*** Question 1 poll created with poll_id=6149858465918485031, waiting 20+5 seconds for answers.
+2026-03-06 17:34:57,435 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:07,668 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:11,757 - quiz_engine - INFO - ***$$&&*** Question 1 finished. Correct option=B. Correct users count=0.
+2026-03-06 17:35:12,663 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:13,116 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:13,552 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:13,553 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:35:17,898 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:18,553 - quiz_engine - INFO - ***$$&&*** Posting question 2/10 (id=ad7bd1bd-18d3-4f54-a64f-73689b577c67) to chat -1003818991305
+2026-03-06 17:35:19,405 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:19,406 - quiz_engine - INFO - ***$$&&*** Using full option text for Q2 in poll.
+2026-03-06 17:35:19,406 - quiz_engine - INFO - ***$$&&*** Correct option for Q2 is D (index=3)
+2026-03-06 17:35:19,816 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:35:19,818 - quiz_engine - INFO - ***$$&&*** Question 2 poll created with poll_id=6149858465918485032, waiting 20+5 seconds for answers.
+2026-03-06 17:35:28,129 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:38,359 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:44,828 - quiz_engine - INFO - ***$$&&*** Question 2 finished. Correct option=D. Correct users count=0.
+2026-03-06 17:35:45,660 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:46,080 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:46,472 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:46,473 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:35:48,589 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:35:51,475 - quiz_engine - INFO - ***$$&&*** Posting question 3/10 (id=3857e3a9-5637-4b73-aa60-1624024be58c) to chat -1003818991305
+2026-03-06 17:35:52,424 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:35:52,425 - quiz_engine - INFO - ***$$&&*** Using full option text for Q3 in poll.
+2026-03-06 17:35:52,425 - quiz_engine - INFO - ***$$&&*** Correct option for Q3 is D (index=3)
+2026-03-06 17:35:52,855 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:35:52,857 - quiz_engine - INFO - ***$$&&*** Question 3 poll created with poll_id=6149858465918485033, waiting 20+5 seconds for answers.
+2026-03-06 17:35:58,821 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:09,053 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:17,859 - quiz_engine - INFO - ***$$&&*** Question 3 finished. Correct option=D. Correct users count=0.
+2026-03-06 17:36:18,870 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:19,284 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:19,339 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:19,805 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:19,805 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:36:24,807 - quiz_engine - INFO - ***$$&&*** Posting question 4/10 (id=a5d449bd-521d-4ea9-9751-41b27a74dc5c) to chat -1003818991305
+2026-03-06 17:36:25,803 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:25,804 - quiz_engine - INFO - ***$$&&*** Using full option text for Q4 in poll.
+2026-03-06 17:36:25,804 - quiz_engine - INFO - ***$$&&*** Correct option for Q4 is C (index=2)
+2026-03-06 17:36:26,272 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:36:26,274 - quiz_engine - INFO - ***$$&&*** Question 4 poll created with poll_id=6149858465918485034, waiting 20+5 seconds for answers.
+2026-03-06 17:36:29,512 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:39,746 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:49,980 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:36:51,276 - quiz_engine - INFO - ***$$&&*** Question 4 finished. Correct option=C. Correct users count=0.
+2026-03-06 17:36:52,083 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:52,494 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:52,887 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:52,888 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:36:57,890 - quiz_engine - INFO - ***$$&&*** Posting question 5/10 (id=2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d60) to chat -1003818991305
+2026-03-06 17:36:58,745 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:36:58,747 - quiz_engine - INFO - ***$$&&*** Using full option text for Q5 in poll.
+2026-03-06 17:36:58,747 - quiz_engine - INFO - ***$$&&*** Correct option for Q5 is B (index=1)
+2026-03-06 17:36:59,152 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:36:59,154 - quiz_engine - INFO - ***$$&&*** Question 5 poll created with poll_id=6149858465918485035, waiting 20+5 seconds for answers.
+2026-03-06 17:37:00,210 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:10,440 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:20,674 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:24,156 - quiz_engine - INFO - ***$$&&*** Question 5 finished. Correct option=B. Correct users count=0.
+2026-03-06 17:37:25,084 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:25,517 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:25,936 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:25,939 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:37:30,907 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:30,940 - quiz_engine - INFO - ***$$&&*** Posting question 6/10 (id=8d9e0f1a-2b3c-4d5e-8f6a-7b8c9d0e1f14) to chat -1003818991305
+2026-03-06 17:37:31,890 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:31,891 - quiz_engine - INFO - ***$$&&*** Using full option text for Q6 in poll.
+2026-03-06 17:37:31,891 - quiz_engine - INFO - ***$$&&*** Correct option for Q6 is C (index=2)
+2026-03-06 17:37:32,302 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:37:32,305 - quiz_engine - INFO - ***$$&&*** Question 6 poll created with poll_id=6149858465918485036, waiting 20+5 seconds for answers.
+2026-03-06 17:37:41,141 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:51,391 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:37:57,308 - quiz_engine - INFO - ***$$&&*** Question 6 finished. Correct option=C. Correct users count=0.
+2026-03-06 17:37:58,120 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:58,524 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:58,925 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:37:58,927 - quiz_engine - INFO - ***$$&&*** Waiting 5 seconds before posting next question.
+2026-03-06 17:38:01,623 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:38:03,929 - quiz_engine - INFO - ***$$&&*** Posting question 7/10 (id=8ede06c6-8fe7-423d-8596-eb65872d2a52) to chat -1003818991305
+2026-03-06 17:38:04,803 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendMessage "HTTP/1.1 200 OK"
+2026-03-06 17:38:04,805 - quiz_engine - INFO - ***$$&&*** Using full option text for Q7 in poll.
+2026-03-06 17:38:04,805 - quiz_engine - INFO - ***$$&&*** Correct option for Q7 is B (index=1)
+2026-03-06 17:38:05,235 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/sendPoll "HTTP/1.1 200 OK"
+2026-03-06 17:38:05,239 - quiz_engine - INFO - ***$$&&*** Question 7 poll created with poll_id=6149858465918485037, waiting 20+5 seconds for answers.
+2026-03-06 17:38:11,856 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:38:20,606 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8443169277:AAFALqOURBJnMRaYTQ7lcK_mpp0FK3sHaq0/getUpdates "HTTP/1.1 200 OK"
+2026-03-06 17:38:20,608 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2026-03-06 17:38:20,609 - telegram.ext.Application - INFO - Application.stop() complete
+2026-03-06 17:38:20,609 - __main__ - INFO - Bot stopped after quiz completion.
