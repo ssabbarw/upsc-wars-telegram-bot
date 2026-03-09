@@ -3,7 +3,7 @@ import logging
 import random
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 from typing import Dict, List, Optional, Set
 
 from telegram import Poll, Update
@@ -59,6 +59,10 @@ class QuizSession:
     usernames: Dict[int, str] = field(default_factory=dict)
     # Indices of questions that were successfully sent (question text + poll).
     asked_question_indices: List[int] = field(default_factory=list)
+    # Question index -> datetime when its poll was sent (used for timing).
+    question_start_times: Dict[int, datetime] = field(default_factory=dict)
+    # Question index -> user_id -> time taken in seconds for final answer.
+    answer_times: Dict[int, Dict[int, float]] = field(default_factory=dict)
 
 
 class QuizManager:
@@ -195,6 +199,8 @@ class QuizManager:
                         question.correct_index,
                     )
 
+                    # Record question start time just before sending the poll
+                    question_start_time = datetime.now()
                     message = await application.bot.send_poll(
                         chat_id=self.group_chat_id,
                         question=poll_question,
@@ -208,6 +214,7 @@ class QuizManager:
                     poll_id = message.poll.id
                     session.poll_to_question_index[poll_id] = idx
                     session.asked_question_indices.append(idx)
+                    session.question_start_times[idx] = question_start_time
                     logger.info(
                         "%s Question %d poll created with poll_id=%s, waiting %s+%s seconds for answers.",
                         LOG_MARKER,
@@ -279,8 +286,30 @@ class QuizManager:
                         parse_mode="Markdown",
                     )
 
-                    if correct_users:
-                        users_list = "\n".join(correct_users)
+                    # Build per-question results with time taken for each correct user.
+                    answers_for_question = session.answers.get(idx, {})
+                    answer_times_for_question = session.answer_times.get(idx, {})
+                    correct_entries: List[tuple[float, str]] = []
+                    for user_id, chosen_index in answers_for_question.items():
+                        if chosen_index != question.correct_index:
+                            continue
+                        display_name = session.usernames.get(
+                            user_id, f"user_id:{user_id}"
+                        )
+                        elapsed = answer_times_for_question.get(user_id)
+                        if elapsed is None:
+                            entry_text = f"{display_name}, time: N/A"
+                            sort_key = float("inf")
+                        else:
+                            seconds = int(round(elapsed))
+                            entry_text = f"{display_name}, in {seconds} seconds"
+                            sort_key = elapsed
+                        correct_entries.append((sort_key, entry_text))
+
+                    correct_entries.sort(key=lambda item: item[0])
+
+                    if correct_entries:
+                        users_list = "\n".join(entry for _, entry in correct_entries)
                     else:
                         users_list = "None"
 
@@ -421,6 +450,15 @@ class QuizManager:
 
         session.answers[question_index][user_id] = chosen_index
 
+        # Record timing for the user's final answer to this question.
+        # We measure elapsed time from when the poll was sent.
+        q_start = session.question_start_times.get(question_index)
+        if q_start is not None:
+            elapsed = (datetime.now() - q_start).total_seconds()
+            if question_index not in session.answer_times:
+                session.answer_times[question_index] = {}
+            session.answer_times[question_index][user_id] = elapsed
+
         # Cache a human-readable display name for this user
         username = getattr(user, "username", None)
         if username:
@@ -448,43 +486,85 @@ class QuizManager:
         if session is None:
             return
 
-        # Aggregate per-user scores across all questions
+        # Aggregate per-user scores and total time across all questions.
         user_scores: Dict[int, int] = {}
+        user_total_time: Dict[int, float] = {}
 
         for idx, question in enumerate(session.questions):
             # Only score questions that were successfully sent
             if idx in session.asked_question_indices:
                 answers_for_question = session.answers.get(idx, {})
+                answer_times_for_question = session.answer_times.get(idx, {})
                 for user_id, chosen_index in answers_for_question.items():
                     if chosen_index == question.correct_index:
                         user_scores[user_id] = user_scores.get(user_id, 0) + 1
+                        elapsed = answer_times_for_question.get(user_id)
+                        if elapsed is None:
+                            elapsed = float(
+                                QUIZ_POLL_DURATION_SECONDS
+                                + QUIZ_POLL_ANSWER_BUFFER_SECONDS
+                            )
+                        user_total_time[user_id] = user_total_time.get(user_id, 0.0) + elapsed
 
-        # Always send leaderboard (Top 10): with participants or "Rank N: None" for all ranks.
+        # Always send leaderboard header.
         await application.bot.send_message(
             chat_id=self.group_chat_id,
             text="*Leaderboard (Top 10)*",
             parse_mode="Markdown",
         )
 
-        if user_scores:
-            # Sort by descending score, then by display name for stability
+        if not user_scores:
+            # No winners at all.
+            await application.bot.send_message(
+                chat_id=self.group_chat_id,
+                text="No winners today.",
+            )
+
+            if self.admin_chat_id is not None:
+                try:
+                    await application.bot.send_message(
+                        chat_id=self.admin_chat_id,
+                        text="*Leaderboard (Top 10)*",
+                        parse_mode="Markdown",
+                    )
+                    await application.bot.send_message(
+                        chat_id=self.admin_chat_id,
+                        text="No winners today.",
+                    )
+                except Exception as admin_exc:  # noqa: BLE001
+                    logger.error(
+                        "%s Failed to send leaderboard to admin: %s",
+                        LOG_MARKER,
+                        admin_exc,
+                    )
+        else:
+            # Sort by descending score, then by total time ascending, then by display name.
             sorted_users = sorted(
                 user_scores.items(),
                 key=lambda kv: (
                     -kv[1],
+                    user_total_time.get(kv[0], 0.0),
                     session.usernames.get(kv[0], f"user_id:{kv[0]}"),
                 ),
             )
             top_users = sorted_users[:10]
 
-            # Assign ranks with ties (same score => same rank)
+            # Assign ranks; ties only if both score and time match.
             rank_map: Dict[int, int] = {}
             prev_score: Optional[int] = None
+            prev_time: Optional[float] = None
             current_rank = 0
             for idx, (user_id, score) in enumerate(top_users):
-                if score != prev_score:
+                total_time = user_total_time.get(user_id, 0.0)
+                if (
+                    prev_score is None
+                    or score != prev_score
+                    or prev_time is None
+                    or abs(total_time - prev_time) > 1e-6
+                ):
                     current_rank = idx + 1
                     prev_score = score
+                    prev_time = total_time
                 rank_map[user_id] = current_rank
 
             lines: List[str] = []
@@ -501,34 +581,36 @@ class QuizManager:
                     display_name = session.usernames.get(
                         user_id, f"user_id:{user_id}"
                     )
-                    lines.append(f"Rank {rank}: {display_name} - {score} correct")
+                    total_time = user_total_time.get(user_id, 0.0)
+                    seconds = int(round(total_time))
+                    lines.append(
+                        f"Rank {rank}: {display_name} - {score} correct in {seconds} seconds"
+                    )
+
             leaderboard_text = "\n".join(lines)
-        else:
-            # No participants: show Rank 1: None through Rank 10: None
-            leaderboard_text = "\n".join(f"Rank {r}: None" for r in range(1, 11))
 
-        await application.bot.send_message(
-            chat_id=self.group_chat_id,
-            text=leaderboard_text,
-        )
+            await application.bot.send_message(
+                chat_id=self.group_chat_id,
+                text=leaderboard_text,
+            )
 
-        if self.admin_chat_id is not None:
-            try:
-                await application.bot.send_message(
-                    chat_id=self.admin_chat_id,
-                    text="*Leaderboard (Top 10)*",
-                    parse_mode="Markdown",
-                )
-                await application.bot.send_message(
-                    chat_id=self.admin_chat_id,
-                    text=leaderboard_text,
-                )
-            except Exception as admin_exc:  # noqa: BLE001
-                logger.error(
-                    "%s Failed to send leaderboard to admin: %s",
-                    LOG_MARKER,
-                    admin_exc,
-                )
+            if self.admin_chat_id is not None:
+                try:
+                    await application.bot.send_message(
+                        chat_id=self.admin_chat_id,
+                        text="*Leaderboard (Top 10)*",
+                        parse_mode="Markdown",
+                    )
+                    await application.bot.send_message(
+                        chat_id=self.admin_chat_id,
+                        text=leaderboard_text,
+                    )
+                except Exception as admin_exc:  # noqa: BLE001
+                    logger.error(
+                        "%s Failed to send leaderboard to admin: %s",
+                        LOG_MARKER,
+                        admin_exc,
+                    )
 
         await application.bot.send_message(
             chat_id=self.group_chat_id,
