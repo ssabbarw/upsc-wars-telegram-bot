@@ -129,11 +129,18 @@ class QuizManager:
                     # Build a full question text message (no 300-char limit here).
                     # First line: question number; second: PYQ year (if available);
                     # then a blank line and the question text. If we have parsed
-                    # options and are showing them in the poll, we strip the
-                    # trailing (a)...(d) options from this text to avoid duplication.
+                    # options and are showing them in the poll (short enough), we
+                    # strip the trailing (a)...(d) options from this text to avoid
+                    # duplication. Otherwise we keep options in the stem so users
+                    # can still read them when the poll shows only A/B/C/D.
                     full_text = question.question_text.strip()
+                    full_options_ok = (
+                        question.options
+                        and len(question.options) == 4
+                        and all(1 <= len(opt) <= 100 for opt in question.options)
+                    )
                     stem = full_text
-                    if question.options and len(question.options) == 4:
+                    if full_options_ok:
                         m = re.search(r"\([a-dA-D]\)", full_text)
                         if m:
                             stem = full_text[: m.start()].rstrip()
@@ -167,11 +174,7 @@ class QuizManager:
 
                     # Decide whether to show full options in the poll or fallback to A/B/C/D
                     poll_options: List[str]
-                    if (
-                        question.options
-                        and len(question.options) == 4
-                        and all(1 <= len(opt) <= 100 for opt in question.options)
-                    ):
+                    if full_options_ok:
                         # Use full option text directly in the poll (no (a)/(b) labels)
                         poll_options = question.options
                         logger.info(
