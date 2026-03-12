@@ -17,7 +17,7 @@ async def main() -> None:
     print(f"Using TELEGRAM_TOKEN={masked_token}, GROUP_CHAT_ID={chat_id!r}")
 
     bot = Bot(token=token)
-    text = "Will share the result soon!!"
+    text = "Hey guys!!\nToday's quiz starting in 2 mins!!\nAre you ready?? 🔥🔥"
 
     await bot.send_message(chat_id=int(chat_id), text=text)
     print(f"Sent test message to chat {chat_id!r}.")

@@ -25,7 +25,7 @@ EXPLANATION_MODE = "analysis"  # or "final"
 
 # Timing configuration (tweak these constants before running main.py)
 # How long each poll stays open for users to answer (seconds).
-QUIZ_POLL_DURATION_SECONDS = 50
+QUIZ_POLL_DURATION_SECONDS = 45
 # Extra safety buffer after the poll closes so all PollAnswer updates are processed
 # before computing winners (seconds).
 QUIZ_POLL_ANSWER_BUFFER_SECONDS = 5
